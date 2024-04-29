@@ -1,0 +1,277 @@
+m255
+K4
+z2
+Z0 !s12c _opt1
+Z1 !s99 nomlopt
+R0
+R1
+R0
+R1
+R0
+R1
+!s12c _opt
+R1
+!s11e vcom 2023.3 2023.07, Jul 17 2023
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z2 dC:/BDI/hdl/cos_sin/sim
+T_opt
+!s110 1714156485
+VV6`l[d_cjFSj<JQ>gnI3_2
+04 14 5 work test_bench_16b bench 1
+=1-001f3c5243a8-662bf3c4-379-167c
+R1
+Z3 !s12b OEM100
+!s124 OEM10U18 
+Z4 o-quiet -auto_acc_if_foreign -work work
+Z5 tCvgOpt 0
+n@_opt
+Z6 OL;O;2023.3;77
+R2
+T_opt1
+!s110 1714157576
+V_N;VjPY0mK>ASb3<Ch3Kg3
+04 14 5 work test_bench_32b bench 1
+=1-001f3c5243a8-662bf807-3b4-17e0
+R1
+R3
+!s124 OEM10U34 
+R4
+R5
+n@_opt1
+R6
+R2
+Pcordic_pkg
+Z7 DPx4 ieee 9 math_real 0 22 :8NNHF3SFI6^on5?4X[S`1
+Z8 DPx4 ieee 11 numeric_std 0 22 F8@]:i<mFK7<TjIzKcTGi0
+Z9 DPx3 std 6 textio 0 22 LS[?81n5ZHWBI9JkBZTV<2
+Z10 DPx4 ieee 14 std_logic_1164 0 22 6<US`=mgl_dFdCEFF7J=m1
+!i122 40
+Z11 w1714155367
+R2
+Z12 8C:/BDI/hdl/cos_sin/src/cordic_pkg.vhd
+Z13 FC:/BDI/hdl/cos_sin/src/cordic_pkg.vhd
+l0
+L27 27
+Vhc^iUh@RP8`OFBNk@6SHR1
+!s100 @bejie<7kS[b:Y5;hK4=`3
+Z14 OL;C;2023.3;77
+31
+b1
+Z15 !s110 1714157759
+!i10b 1
+Z16 !s108 1714157759.000000
+Z17 !s90 -reportprogress|300|-93|C:/BDI/hdl/cos_sin/src/cordic_pkg.vhd|
+Z18 !s107 C:/BDI/hdl/cos_sin/src/cordic_pkg.vhd|
+!i113 0
+o-93
+Z19 tExplicit 1 CvgOpt 0
+Bbody
+Z20 DPx4 work 10 cordic_pkg 0 22 hc^iUh@RP8`OFBNk@6SHR1
+R7
+R8
+R9
+R10
+!i122 40
+l0
+L56 71
+VdZVm3eG55PC1DI9[20DcF1
+!s100 CXH5AW3XWEGLnP8<_L`BG2
+R14
+31
+R15
+!i10b 1
+R16
+R17
+R18
+!i113 0
+o-93
+R19
+Ecos_sin
+Z21 w1404993860
+R20
+R7
+R8
+R9
+R10
+!i122 42
+R2
+Z22 8C:/BDI/hdl/cos_sin/src/cos_sin.vhd
+Z23 FC:/BDI/hdl/cos_sin/src/cos_sin.vhd
+l0
+Z24 L27 1
+VL242O]g;<gAH>R;[o2e_T1
+!s100 WELTV8W<`Li@FGJ<?9;HZ3
+R14
+31
+Z25 !s110 1714157760
+!i10b 1
+Z26 !s108 1714157760.000000
+Z27 !s90 -reportprogress|300|-93|C:/BDI/hdl/cos_sin/src/cos_sin.vhd|
+Z28 !s107 C:/BDI/hdl/cos_sin/src/cos_sin.vhd|
+!i113 0
+o-93
+R19
+Artl
+R20
+R7
+R8
+R9
+R10
+DEx4 work 7 cos_sin 0 22 L242O]g;<gAH>R;[o2e_T1
+!i122 42
+l98
+L50 111
+VQMid0WLaJYl[c`1SM9QY<3
+!s100 QV686X^i9aEYDFeLjoaoS2
+R14
+31
+R25
+!i10b 1
+R26
+R27
+R28
+!i113 0
+o-93
+R19
+Ecos_sin_pipe
+Z29 w1405079380
+R20
+R7
+R8
+R9
+R10
+!i122 41
+R2
+Z30 8C:/BDI/hdl/cos_sin/src/cos_sin_pipe.vhd
+Z31 FC:/BDI/hdl/cos_sin/src/cos_sin_pipe.vhd
+l0
+R24
+VkKE0mEoLmZ7Q[[`n:nFGl2
+!s100 54nB<_NT7AcXYh3NYo9hO3
+R14
+31
+R25
+!i10b 1
+R26
+Z32 !s90 -reportprogress|300|-93|C:/BDI/hdl/cos_sin/src/cos_sin_pipe.vhd|
+Z33 !s107 C:/BDI/hdl/cos_sin/src/cos_sin_pipe.vhd|
+!i113 0
+o-93
+R19
+Artl
+R20
+R7
+R8
+R9
+R10
+DEx4 work 12 cos_sin_pipe 0 22 kKE0mEoLmZ7Q[[`n:nFGl2
+!i122 41
+l127
+L50 160
+VdmSmBblS8V?Sf?P<cVE=b3
+!s100 [2_g35R:ZlUL7kilI;6J[2
+R14
+31
+R25
+!i10b 1
+R26
+R32
+R33
+!i113 0
+o-93
+R19
+Etest_bench_16b
+Z34 w1714155738
+Z35 DPx4 ieee 16 std_logic_textio 0 22 C8j>g0lzF^EAA]5<S6PY32
+R8
+R9
+R10
+!i122 7
+R2
+Z36 8C:/BDI/hdl/cos_sin/tb/test_bench_16b.vhd
+Z37 FC:/BDI/hdl/cos_sin/tb/test_bench_16b.vhd
+l0
+R24
+V45NE5V6^PcVnSdd:<Mg=>3
+!s100 hhnZ?JXWLYQMR^EOXGB?Z0
+R14
+31
+Z38 !s110 1714156585
+!i10b 1
+Z39 !s108 1714156585.000000
+Z40 !s90 -reportprogress|300|-93|C:/BDI/hdl/cos_sin/tb/test_bench_16b.vhd|
+Z41 !s107 C:/BDI/hdl/cos_sin/tb/test_bench_16b.vhd|
+!i113 0
+o-93
+R19
+Abench
+R35
+R8
+R9
+R10
+DEx4 work 14 test_bench_16b 0 22 45NE5V6^PcVnSdd:<Mg=>3
+!i122 7
+l88
+L29 173
+VlO3l<Eh:6PKeSE2ei5Ok>1
+!s100 WX99@IF=P]fe0kVeI4N;S0
+R14
+31
+R38
+!i10b 1
+R39
+R40
+R41
+!i113 0
+o-93
+R19
+Etest_bench_32b
+Z42 w1714157557
+R35
+R8
+R9
+R10
+!i122 43
+R2
+Z43 8C:/BDI/hdl/cos_sin/tb/test_bench_32b.vhd
+Z44 FC:/BDI/hdl/cos_sin/tb/test_bench_32b.vhd
+l0
+R24
+VVAgE]:Sc:@B5oLij5SeSH2
+!s100 M8^F02U2zXX[ZO^cJ0JR@2
+R14
+31
+R25
+!i10b 1
+R26
+Z45 !s90 -reportprogress|300|-93|C:/BDI/hdl/cos_sin/tb/test_bench_32b.vhd|
+Z46 !s107 C:/BDI/hdl/cos_sin/tb/test_bench_32b.vhd|
+!i113 0
+o-93
+R19
+Abench
+R35
+R8
+R9
+R10
+Z47 DEx4 work 14 test_bench_32b 0 22 VAgE]:Sc:@B5oLij5SeSH2
+!i122 43
+l89
+Z48 L29 176
+Z49 VmXRNIF[Z=Z;F^>SDd5YHC2
+Z50 !s100 N:G4RFYnbL=@Gm6cb<:Ul2
+R14
+31
+R25
+!i10b 1
+R26
+R45
+R46
+!i113 0
+o-93
+R19

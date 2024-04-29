@@ -1,0 +1,1 @@
+start %SIMU_HDL% -do %PATH_BIBLI_HDL%/cos_sin/scr/simu_rtl_interactif_32b.do
