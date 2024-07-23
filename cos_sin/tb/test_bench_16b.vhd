@@ -132,7 +132,7 @@ end process CLOCK_PROCESS;
 READ_DATA_PROCESS : process
 
   -- For data_vit
-  file file_data      		: text open READ_MODE is "$PATH_BIBLI_HDL/cos_sin/tb/t01/data.in";
+  file file_data      		: text open READ_MODE is "$PATH_BIBLI_HDL/InferMem/tb/t01/data.in";
   variable line_data  		: line;
   variable vi_X	            : std_logic_vector(G_PRECISION-1 downto 0);
   variable vi_Y	            : std_logic_vector(G_PRECISION-1 downto 0);  
@@ -176,7 +176,7 @@ end process READ_DATA_PROCESS;
 ------------------
 WRITE_DATA_PROCESS : process
 
-  file file_data     : text open WRITE_MODE is "$PATH_BIBLI_HDL/cos_sin/tb/t01/data.out";
+  file file_data     : text open WRITE_MODE is "$PATH_BIBLI_HDL/InferMem/tb/t01/data.out";
   variable line_data : line;
 
   begin
