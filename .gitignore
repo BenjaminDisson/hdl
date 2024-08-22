@@ -5,3 +5,5 @@
 *.exe
 *.o
 *.so
+*.wlf
+work/
