@@ -1,0 +1,84 @@
+# //  Questa Intel Starter FPGA Edition-64
+# //  Version 2023.3 win64 Jul 17 2023
+# //
+# //  Copyright 1991-2023 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  QuestaSim and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# do {M:\/InferMem/run/simu_rtl_interactif_Ram1c2p.do}
+# ** Warning: (vlib-34) Library already exists at "work".
+# Errors: 0, Warnings: 1
+# Questa Intel Starter FPGA Edition-64 vcom 2023.3 Compiler 2023.07 Jul 17 2023
+# Start time: 23:21:18 on Apr 19,2024
+# vcom -reportprogress 300 -93 M:/InferMem/src/InferMem_pkg.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling package InferMem_pkg
+# -- Compiling package body InferMem_pkg
+# -- Loading package InferMem_pkg
+# End time: 23:21:18 on Apr 19,2024, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Questa Intel Starter FPGA Edition-64 vcom 2023.3 Compiler 2023.07 Jul 17 2023
+# Start time: 23:21:18 on Apr 19,2024
+# vcom -reportprogress 300 -93 M:/InferMem/src/InferRam1c2p.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Loading package InferMem_pkg
+# -- Compiling entity InferRam1c2p
+# -- Compiling architecture Behavior of InferRam1c2p
+# End time: 23:21:18 on Apr 19,2024, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Questa Intel Starter FPGA Edition-64 vcom 2023.3 Compiler 2023.07 Jul 17 2023
+# Start time: 23:21:19 on Apr 19,2024
+# vcom -reportprogress 300 -93 M:/InferMem/src/Wrapper_Ram1c2p.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Loading package InferMem_pkg
+# -- Compiling entity Wrapper_Ram1c2p
+# -- Compiling architecture Behavior of Wrapper_Ram1c2p
+# End time: 23:21:19 on Apr 19,2024, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Questa Intel Starter FPGA Edition-64 vcom 2023.3 Compiler 2023.07 Jul 17 2023
+# Start time: 23:21:19 on Apr 19,2024
+# vcom -reportprogress 300 -93 M:/InferMem/tb/tb_Wrapper_Ram1c2p.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Loading package std_logic_textio
+# -- Loading package InferMem_pkg
+# -- Compiling entity tb_Wrapper_Ram1c2p
+# -- Compiling architecture bench of tb_Wrapper_Ram1c2p
+# End time: 23:21:19 on Apr 19,2024, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vsim tb_Wrapper_Ram1c2p 
+# Start time: 23:21:19 on Apr 19,2024
+# ** Note: (vsim-3813) Design is being optimized due to module recompilation...
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading ieee.std_logic_textio(body)
+# Loading work.infermem_pkg(body)
+# Loading work.tb_wrapper_ram1c2p(bench)#1
+# 1
+# ** Note: Beginning to read files
+#    Time: 110 ns  Iteration: 1  Instance: /tb_wrapper_ram1c2p
+# ** Failure: End of simulation
+#    Time: 510 ns  Iteration: 1  Process: /tb_wrapper_ram1c2p/READ_DATA_PROCESS File: M:/InferMem/tb/tb_Wrapper_Ram1c2p.vhd
+# Break in Process READ_DATA_PROCESS at M:/InferMem/tb/tb_Wrapper_Ram1c2p.vhd line 148
+# End time: 23:22:28 on Apr 19,2024, Elapsed time: 0:01:09
+# Errors: 1, Warnings: 0

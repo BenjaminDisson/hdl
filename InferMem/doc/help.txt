@@ -1,0 +1,36 @@
+One problem with this ram is that the output is unregistered. BRAMs dont support this. You should register the address at least before using it as an index into your array.
+
+
+Correct me if I am wrong, but a block RAM cannot have an an asynchronous read and this code will infer a distributed RAM instead,
+
+
+
+
+
+Read-first
+    Old content is read before new content is loaded.
+Write-first
+    New content is immediately made available for reading Write-first is also known as read-through.
+No-change
+    Data output does not change as new content is loaded into RAM. 
+
+
+1) Xilinx recommends that the memory and the output registers are all inferred in a single level of hierarchy, because this is the easiest method to ensure inference is as intended.
+
+2) Memory arrays should not be reset. Only the output of the RAM can tolerate a reset. The reset must be synchronous in order for inference of the output register into the RAM primitive. An asynchronous reset will cause the register to not be inferred into the RAM primitive.
+Additionally, the output signal can only be reset to 0
+
+3) The fanout of the data output bits from the memory array must be 1 for the second register to be absorbed by the RAM primitive. 
+
+4) Make sure that registers do not have feedback logic, in the example below, because the adder requires the current value of register, this logic cannot be retimed and packed in to a block RAM. The resultant circuit is a block RAM without output registers 
+
+https://docs.amd.com/r/en-US/ug901-vivado-synthesis/RAM-HDL-Coding-Guidelines
+
+FFRam1c1p
+FFRam1c2p
+
+Ram1c1p
+Ram1c2p
+
+Ram2c2p
+Rom

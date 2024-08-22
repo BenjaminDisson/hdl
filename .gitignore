@@ -1,0 +1,7 @@
+# not manageg
+*.out
+*.log
+*.dll
+*.exe
+*.o
+*.so
