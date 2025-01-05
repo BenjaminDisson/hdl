@@ -18,15 +18,17 @@ use work.InferMem_pkg.all;
 
 entity Wrapper_Fifo1c is
     generic (
-    g_DataSize          : positive :=8 ;                            
-    g_AddrSize          : positive :=16;                            
-    g_AlmostFullLevel   : natural  := 2**16-1-2;                    
-    g_AlmostEmptyLevel  : natural:= 2                               
+    g_AsyncReset        : boolean   := False;
+    g_SyncReset         : boolean   := False;       
+    g_AddrSize          : positive  :=16;       
+    g_DataSize          : positive  :=8 ;                                              
+    g_AlmostFullLevel   : natural   := 2**16-1-2;                    
+    g_AlmostEmptyLevel  : natural   := 2                               
     );
     port ( 
     i_clk               : in  std_logic;                   
     i_areset_n          : in  std_logic;                   
-    i_sclr              : in  std_logic;                   
+    i_sreset            : in  std_logic;                   
 
     i_WrData            : in  std_logic_vector(g_DataSize-1 downto 0); 
     i_WrReq             : in  std_logic;                     
@@ -44,16 +46,19 @@ end Wrapper_Fifo1c;
 architecture Behavior of Wrapper_Fifo1c is
 begin
 
-  inst_InterFifo1c : InterFifo1c
+  inst_InferFifo1c : InferFifo1c
     generic map (
-    g_DataSize          => g_DataSize,                         
-    g_AddrSize          => g_AddrSize,                         
+    g_AsyncReset        => g_AsyncReset,
+    g_SyncReset         => g_SyncReset,
+    g_AddrSize          => g_AddrSize,       
+    g_DataSize          => g_DataSize,                                               
     g_AlmostFullLevel   => g_AlmostFullLevel,                  
     g_AlmostEmptyLevel  => g_AlmostEmptyLevel                 
     )
     port map( 
     i_clk               => i_clk,              
-    i_areset_n          => i_areset_n,                     
+    i_areset_n          => i_areset_n,
+    i_sreset            => i_sreset,       
     i_WrData            => i_WrData,          
     i_WrReq             => i_WrReq,            
     i_RdReq             => i_RdReq,            

@@ -18,15 +18,15 @@ package InferMem_pkg is
 
     component InferRam1c2p is
         generic(
-            g_DataSize       :  integer := 8 ;        
-            g_AddrSize       :  integer := 16 );     
+            g_AddrSize       :  integer := 16;        
+            g_DataSize       :  integer := 8 );     
         port(
             i_clk       : in std_logic;                                       
-            i_WrData    : in std_logic_vector(g_DataSize-1 downto 0);  
+            i_WrAddress : in std_logic_vector(g_AddrSize-1 downto 0);
             i_WrEn      : in std_logic;                                   
-            i_WrAddress : in std_logic_vector(g_AddrSize-1 downto 0);     
+            i_WrData    : in std_logic_vector(g_DataSize-1 downto 0);                   
+            i_RdAddress : in std_logic_vector(g_AddrSize-1 downto 0);
             i_RdEn      : in std_logic;
-            i_RdAddress : in std_logic_vector(g_AddrSize-1 downto 0);  
             o_RdData    : out std_logic_vector(g_DataSize-1 downto 0)
             );
         end component InferRam1c2p;
@@ -34,10 +34,14 @@ package InferMem_pkg is
 
     component Wrapper_Ram1c2p is
         generic(
-            g_DataSize      :  integer := 8 ;          
-            g_AddrSize      :  integer := 16 );      
+            g_AsyncReset    : boolean := False;
+            g_SyncReset     : boolean := False;            
+            g_AddrSize      : integer := 16 ;          
+            g_DataSize      : integer := 8
+            );      
         port(           
-            i_areset_n    : in std_logic  := '0';  -- Care, this standard pin is not in the infer Ram
+            i_areset_n    : in std_logic  := '1';  -- Care, this standard pin is not in the infer Ram
+            i_sreset      : in std_logic  := '0';  -- Care, this standard pin is not in the infer Ram
             i_clk         : in std_logic;    
             i_WrAddress   : in std_logic_vector(g_AddrSize-1 downto 0); 
             i_WrEn        : in std_logic;                                                 
@@ -53,14 +57,17 @@ package InferMem_pkg is
 
     component InferFifo1c is
         generic (
-            g_DataSize          : positive :=8 ;                               
-            g_AddrSize          : positive :=16;                               
+            g_AsyncReset        : boolean   := False;
+            g_SyncReset         : boolean   := False;             
+            g_AddrSize          : positive :=16;            
+            g_DataSize          : positive :=8 ;                                                
             g_AlmostFullLevel   : natural  := 2**16-1-2;                       
             g_AlmostEmptyLevel  : natural:= 2                                  
             );
         port ( 
             i_clk               : in  std_logic;                               
-            i_areset_n          : in  std_logic;                               
+            i_areset_n          : in  std_logic;
+            i_sreset            : in  std_logic;                   
             i_WrData            : in  std_logic_vector(g_DataSize-1 downto 0); 
             i_WrReq             : in  std_logic;                               
             i_RdReq             : in  std_logic;                               
@@ -76,15 +83,17 @@ package InferMem_pkg is
 
     component Wrapper_Fifo1c is
         generic (
-            g_DataSize          : positive :=8 ;                            
-            g_AddrSize          : positive :=16;                            
+            g_AsyncReset        : boolean   := False;
+            g_SyncReset         : boolean   := False;             
+            g_AddrSize          : positive :=16;             
+            g_DataSize          : positive :=8 ;                                    
             g_AlmostFullLevel   : natural  := 2**16-1-2;                    
             g_AlmostEmptyLevel  : natural:= 2                               
             );
         port ( 
             i_clk               : in  std_logic;                   
             i_areset_n          : in  std_logic;                   
-            i_sclr              : in  std_logic;                   
+            i_sreset            : in  std_logic;                   
             i_WrData            : in  std_logic_vector(g_DataSize-1 downto 0); 
             i_WrReq             : in  std_logic;                     
             i_RdReq             : in  std_logic;                  

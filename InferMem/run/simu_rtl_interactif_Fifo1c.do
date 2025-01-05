@@ -21,7 +21,7 @@ vcom -93 $env(PATH_BIBLI_HDL)/InferMem/tb/tb_Wrapper_Fifo1c.vhd
 
 
 #Simulation du test bench
-vsim tb_Wrapper_Fifo1c
+vsim -voptargs="+acc" -t ps tb_Wrapper_Fifo1c
 
 #Ajout des "waves" qui nous interessent(pour le mode interactif)
 do $env(PATH_BIBLI_HDL)/InferMem/sim/wave.do

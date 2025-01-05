@@ -30,7 +30,7 @@ end InferRam1c2p;
 
 
 
-architecture Behavior of InferRam1c2p is
+architecture rtl of InferRam1c2p is
 -------------------------------------------------------------------------------
 --
 -- Type 
@@ -82,4 +82,4 @@ EXTRACT: process(i_clk)
 end process EXTRACT ;
 	
 
-end Behavior;
+end rtl;

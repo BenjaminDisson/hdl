@@ -17,10 +17,14 @@ library ieee;
 use work.InferMem_pkg.all;
 
 entity Wrapper_Ram1c2p is
-  generic(g_DataSize        : integer := 8 ;      
-          g_AddrSize        : integer := 8 );      
+  generic(g_AsyncReset    : boolean := False;
+          g_SyncReset     : boolean := False;
+          g_AddrSize      : integer := 16 ;      
+          g_DataSize      : integer := 8
+          );       
   port(
-        i_areset_n    : in std_logic  := '0'; 
+        i_areset_n    : in std_logic  := '1'; -- Not used here
+        i_sreset      : in std_logic  := '0'; -- Not used here 
         i_clk         : in std_logic;    
         i_WrAddress   : in std_logic_vector(g_AddrSize-1 downto 0); 
         i_WrEn        : in std_logic;                                                 
@@ -41,7 +45,6 @@ begin
         )
     port map
     ( 
---    i_areset_n  => i_areset_n,    -- Care, this standard pin is not in the infer Ram
     i_clk       => i_clk,            
     i_WrAddress => i_WrAddress,      
     i_WrEn      => i_WrEn,           
