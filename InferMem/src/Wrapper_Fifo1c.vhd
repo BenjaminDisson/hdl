@@ -38,8 +38,10 @@ entity Wrapper_Fifo1c is
     o_StatusFull        : out std_logic;                  
     o_StatusEmpty       : out std_logic;                  
     o_StatusAlmostFull  : out std_logic;                  
-    o_StatusAlmostEmpty : out std_logic;                  
-    o_StatusWordCounter : out std_logic_vector(g_AddrSize-1 downto 0)  
+    o_StatusAlmostEmpty : out std_logic;
+    o_Overflow         	: out std_logic; 
+    o_Underflow        	: out std_logic; 	
+    o_StatusWordCounter : out std_logic_vector(g_AddrSize downto 0)  
     );
 end Wrapper_Fifo1c;
 
@@ -67,6 +69,8 @@ begin
     o_StatusEmpty       => o_StatusEmpty,      
     o_StatusAlmostFull  => o_StatusAlmostFull, 
     o_StatusAlmostEmpty => o_StatusAlmostEmpty,
+    o_Overflow         	=> o_Overflow, 
+    o_Underflow        	=> o_Underflow, 	
     o_StatusWordCounter => o_StatusWordCounter              
     );
 

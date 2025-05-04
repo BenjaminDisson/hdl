@@ -75,8 +75,10 @@ package InferMem_pkg is
             o_StatusFull        : out std_logic;                               
             o_StatusEmpty       : out std_logic;                               
             o_StatusAlmostFull  : out std_logic;                               
-            o_StatusAlmostEmpty : out std_logic;                               
-            o_StatusWordCounter : out std_logic_vector(g_AddrSize-1 downto 0)  
+            o_StatusAlmostEmpty : out std_logic;         
+    		o_Overflow         	: out std_logic; 
+    		o_Underflow        	: out std_logic; 		
+            o_StatusWordCounter : out std_logic_vector(g_AddrSize downto 0)  
         );
     end component InferFifo1c;
 
@@ -101,8 +103,10 @@ package InferMem_pkg is
             o_StatusFull        : out std_logic;                  
             o_StatusEmpty       : out std_logic;                  
             o_StatusAlmostFull  : out std_logic;                  
-            o_StatusAlmostEmpty : out std_logic;                  
-            o_StatusWordCounter : out std_logic_vector(g_AddrSize-1 downto 0)  
+            o_StatusAlmostEmpty : out std_logic;  
+    		o_Overflow         	: out std_logic; 
+    		o_Underflow        	: out std_logic; 
+            o_StatusWordCounter : out std_logic_vector(g_AddrSize downto 0)  
             );
     end component Wrapper_Fifo1c;
     

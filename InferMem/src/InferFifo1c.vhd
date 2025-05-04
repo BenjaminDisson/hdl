@@ -8,27 +8,52 @@
 --   ----------------------------------------------------------------------------------------------
 --   Modifications    
 --   ----------------------------------------------------------------------------------------------
---   Date       : Ver.  : Author           : Comments
+--   Date       : Ver.  : Author            : Comments
 --   ---------------------------------------------------------------------------------------------- 
---   01/01/2009 : 1.0   : Benjamin Disson  : Creation
+--   01/01/2009 : 1.0   : Benjamin Disson   : Creation
+--   01/05/2025 : 1.1   : Benjamin Disson   : Add flag output
+--                                          : s_WrEn must be re-synchronized in RAM module
+--                                          : s_RdEn must be re-synchronized in RAM module
+--                                          : o_StatusEmpty must be registered for better speed 
+--                                          : o_StatusFull must be registered for better speed 
+--
+-- FIFO 4 data // almost (both) = 1
+--           __    __    __    __    __    __    __    __    __    __    __    __    __    __
+--  Clk   __|  |__|  |__|  |__|  |__|  |__|  |__|  |__|  |__|  |__|  |__|  |__|  |__|  |__|  
+--                            
+--                            |     |     |     |     |
+-- Wrreq                     ______________________________
+--        __________________|                              |___________________________________
+--
+-- IData  xxxxxxxxxxxxxxxxxx| X1  | X2  | X3  | X4  | xxxxxxxxxxxxx
+--
+-- Rdreq        _____
+--       ______|     |______________________________________
+--
+-- OData
 --
 --
---  Clk         0|                1|                   2|                     3|
---           Request        get fifo status     
---           i_WrReq  =>          s_WrEn    ===============||
---           i_RdReq  =>          s_RdEn    ==========||   ||
---                                 /\                 \/   \/
---                                 ||          o_StatusWordCounter
---                                 ||                  ||
---                                 ||                  \/
---                                 ||========= o_StatusFull
---                                             o_StatusAlmostFull
---                                             o_StatusAlmostEmpty
---                                             o_StatusEmpty
+-- Empty  ____________________
+--                            |_______________________________________________________________
 --
---          i_WrData  =>      s_WrData (ram)      
---                           s_WrAddress (ram)
+-- Almost _________________________________           
+-- Empty                        g1    +1   |____________________________
+--
+-- Under           ____
+-- flow___________|    |______________________________________
+--
+-- Full                                             _______________
+--      ___________________________________________|                                          
+--                       
+-- Almost
+-- Full 
 -- 
+-- Over
+-- flow
+--
+-- Count
+--
+--
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -39,10 +64,10 @@ use work.InferMem_pkg.all;
     generic (
     g_AsyncReset        : boolean   := False;
     g_SyncReset         : boolean   := False; 
-    g_AddrSize          : positive  :=16;                              -- Address bus        
-    g_DataSize          : positive  :=8 ;	                           -- Data bus
-    g_AlmostFullLevel   : natural   := 2**16-1-2;	                   -- "almost_full" level
-    g_AlmostEmptyLevel  : natural   := 2	                           -- "almost_empty" level
+    g_AddrSize          : positive  := 16;                             -- Address bus        
+    g_DataSize          : positive  := 8 ;	                           -- Data bus
+    g_AlmostFullLevel   : natural   := 2;	                           -- "almost_full" level
+    g_AlmostEmptyLevel  : natural   := 3	                           -- "almost_empty" level
     );
     port ( 
     i_clk               : in  std_logic;  							   -- Single clock
@@ -58,7 +83,9 @@ use work.InferMem_pkg.all;
     o_StatusEmpty       : out std_logic;  							   -- Flag: fifo is empty
     o_StatusAlmostFull  : out std_logic;  							   -- Flag: fifo nearly full
     o_StatusAlmostEmpty : out std_logic;  							   -- Flag: fifo nearly empty
-    o_StatusWordCounter : out std_logic_vector(g_AddrSize-1 downto 0)  -- Flag: number of word in the fifo
+    o_Overflow         	: out std_logic;                           	   -- Flag: Fifo is full and trying to push data
+    o_Underflow        	: out std_logic; 							   -- Flag: Fifo is empty and trying to pull data
+    o_StatusWordCounter : out std_logic_vector(g_AddrSize downto 0)    -- Flag: number of word in the fifo
     );
   end InferFifo1c;
 
@@ -69,18 +96,20 @@ use work.InferMem_pkg.all;
 -- Signals declaration
 --
 -------------------------------------------------------------------------------
-    signal s_WrAddress      : std_logic_vector(g_AddrSize-1 downto 0); 
-    signal s_WrEn           : std_logic;
-    signal s_WrData         : std_logic_vector(g_DataSize-1 downto 0);
-
-    signal s_RdAddress      : std_logic_vector(g_AddrSize-1 downto 0); 
-    signal s_RdEn           : std_logic;       
-    signal s_RdData         : std_logic_vector(g_DataSize-1 downto 0);  
-
-    signal s_StatusFull     : std_logic;                           
-    signal s_StatusEmpty    : std_logic;                                
-       
-   begin
+    signal s_WrAddress          : std_logic_vector(g_AddrSize-1 downto 0); 
+    signal s_WrEn               : std_logic;
+    signal s_RdAddress          : std_logic_vector(g_AddrSize-1 downto 0); 
+    signal s_RdEn               : std_logic;        
+    signal s_StatusFull         : std_logic;                           
+    signal s_StatusEmpty        : std_logic; 
+    signal s_StatusAlmostFull   : std_logic; 
+    signal s_StatusAlmostEmpty  : std_logic; 
+    signal s_StatusWordCounter  : std_logic_vector(g_AddrSize downto 0);
+    signal s_Overflow         	: std_logic;                           
+    signal s_Underflow        	: std_logic; 
+    signal s_Loop               : std_logic; 
+	
+    begin
 -------------------------------------------------------------------------------
 --
 -- Port map of the component
@@ -99,23 +128,22 @@ inst_WrapperRam1c2p : Wrapper_Ram1c2p
         i_sreset        => open,	
 		i_clk		    => i_clk,
 		i_WrAddress		=> s_WrAddress,
-		i_WrEn		    => s_WrEn,
-		i_WrData		=> s_WrData,	        
+		i_WrEn		    => s_WrEn, -- s_WrEn asynchronous but re-synchronized in RAM module
+		i_WrData		=> i_WrData,	        
 		i_RdAddress		=> s_RdAddress,	
-		i_RdEn		    => s_RdEn,	
+		i_RdEn		    => s_RdEn, -- s_RdEn asynchronous but re-synchronized in RAM module	
 		o_RdData		=> o_RdData
 	);
 
 
-
--------------------------------------------------------------------------------
---
--- Process        : GuardStatus
--- Type           : Synchronous
--- Description    : Check the read / write operation by taken into account 
---                : StatusEmpty and StatusFull 
---
--------------------------------------------------------------------------------
+-- -------------------------------------------------------------------------------
+-- --
+-- -- Process        : AccessProcess
+-- -- Type           : Synchronous
+-- -- Description    : Check the read / write operation by taken into account 
+-- --                : StatusEmpty and StatusFull 
+-- --
+-- -------------------------------------------------------------------------------  
 --ASYNC_GUARD_GENERATE: if (g_AsyncReset = True) generate   
 --GuardAccess : process(i_areset_n, i_clk)
 --end generate ASYNC_GUARD_GENERATE;
@@ -123,275 +151,181 @@ inst_WrapperRam1c2p : Wrapper_Ram1c2p
 --NOTASYNC_GUARD_GENERATE: if g_AsyncReset = False generate
 --GuardAccess : process(i_clk)
 --end generate NOTASYNC_GUARD_GENERATE;
+AccessProcess : process(i_areset_n, i_clk)
+begin
+    if i_areset_n = '0' and g_AsyncReset = True then
+        s_WrAddress             <= (others =>'0');
+        s_RdAddress             <= (others =>'0');
+        s_Loop                  <= '0';
+--                s_StatusFull            <= '0';
+--                s_StatusEmpty           <= '1';       
 
-GuardAccess : process(i_areset_n, i_clk)
-        variable v_WrEn     : std_logic;
-        variable v_RdEn     : std_logic;
-        variable v_UseDw    : natural range 0 to 2**g_AddrSize;
-        begin
-            if i_areset_n = '0' and g_AsyncReset = True then
-                s_WrAddress <= (others =>'0');
-                s_WrEn      <= '0';
-                s_WrData    <= (others =>'0');
-                s_RdAddress <= (others =>'0');
-                s_RdEn      <= '0';
-                s_RdData    <= (others =>'0');
-                v_RdEn      :='0';
-                v_WrEn      :='0';
 
-                v_UseDw                := 0;
-                s_StatusEmpty          <= '1';
-                s_StatusFull           <= '0';        
-                o_StatusEmpty          <= '1';
-                o_StatusFull           <= '0';
-                o_StatusAlmostFull     <= '0';
-                o_StatusAlmostEmpty    <= '1';
-                o_StatusWordCounter    <= (others =>'0');
-
-            elsif rising_edge(i_clk) then
---end generate ASYNC_GUARD_GENERATE;    -- tot test
+    elsif rising_edge(i_clk) then
+--end generate ASYNC_GUARD_GENERATE;    
 --elsif g_AsyncReset = False generate   
---    GuardAccess : process(i_clk)
---        variable v_WrEn     : std_logic;
---        variable v_RdEn     : std_logic;
---        begin
---            if rising_edge(i_clk) then
---end generate ASYNC_GUARD_GENERATE;
 
+--end generate ASYNC_GUARD_GENERATE;
 
 -- SYNC_GUARD_GENERATE : if g_SyncReset = True generate
         if i_sreset = '1' and g_SyncReset = True then
-            s_WrAddress <= (others =>'0');
-            s_WrEn      <= '0';
-            s_WrData    <= (others =>'0');
-            s_RdAddress <= (others =>'0');
-            s_RdEn      <= '0';
-            s_RdData    <= (others =>'0');
-            v_RdEn      :='0';
-            v_WrEn      :='0';
+            s_WrAddress             <= (others =>'0');
+            s_RdAddress             <= (others =>'0');
+--            s_StatusFull            <= '0';
+--            s_StatusEmpty           <= '1';            
 
-            v_UseDw                := 0;
-            s_StatusEmpty          <= '1';
-            s_StatusFull           <= '0';        
-            o_StatusEmpty          <= '1';
-            o_StatusFull           <= '0';
-            o_StatusAlmostFull     <= '0';
-            o_StatusAlmostEmpty    <= '1';
-            o_StatusWordCounter    <= (others =>'0');
         else
 --end generate SYNC_GUARD_GENERATE;
-            
-
-
-            -- Management of WRITE access
-            -- 1) when read access, no problem to write 2) when fifo not full            
-            if (i_RdReq  ='1') or (s_StatusFull = '0') then
-                v_WrEn := i_WrReq;
+            -- If write request and not full
+            if s_StatusFull='0' and i_WrReq = '1' then
+                if unsigned(s_WrAddress) = 2**g_AddrSize-1 then
+                    s_WrAddress <= (others =>'0');
+                    s_Loop      <= '1';
+                else
+                    s_WrAddress <= std_logic_vector(unsigned(s_WrAddress) + 1);
+                end if;
             else
-                v_WrEn := '0';
-            end if;
-
-            s_WrEn <= v_WrEn;
-
-            if v_WrEn = '1' then
-                s_WrAddress <= std_logic_vector(unsigned(s_WrAddress) + 1);
-            end if;
---            s_WrEn      <=  i_WrReq when ((i_RdReq  ='1') or (s_StatusFull = '0')) else
---                            '0';
---            s_WrAddress <=  std_logic_vector(unsigned(s_WrAddress) + 1) when (((i_RdReq  ='1') or (s_StatusFull = '0')) and i_WrReq = '1') else
---                            s_WrAddress;
-
-
-            -- Management of WRITE Data
-            -- 1) Synchronize access & data
-            s_WrData <= i_WrData;
-
-
-            -- Management of READ access
-            -- 1) when write access no probelm to read (care about timing access) 2) when fifo not empty
-            -- Note delete condition 1 because on the time to go through the fifo 
-           if s_StatusEmpty='0' then
-               v_RdEn := i_RdReq;
-           else
-               v_RdEn := '0';
-           end if;
-           
-           s_RdEn <= v_RdEn;
-
-           if v_RdEn = '1' then
-               s_RdAddress <= std_logic_vector(unsigned(s_RdAddress) + 1);
-           end if;
---            s_RdEn      <=  i_RdReq when s_StatusEmpty='0' else
---                            '0';
---            s_RdAddress <=  std_logic_vector(unsigned(s_RdAddress) + 1) when (s_StatusEmpty='0' and i_RdReq = '1') else
---                            s_RdAddress;
-
-
-
-            -- Mangement of the counter
-            -- 1) if read or write access ONLY
-            if s_WrEn = '1' and s_RdEn = '0' then  
-                v_UseDw := v_UseDw + 1;
-                --o_StatusWordCounter <= std_logic_vector(unsigned(o_StatusWordCounter) + 1 );
-            elsif s_WrEn = '0' and s_RdEn = '1' then 
-                v_UseDw := v_UseDw - 1;
-                --o_StatusWordCounter <= std_logic_vector(unsigned(o_StatusWordCounter) - 1 );
-            else
-                v_UseDw := v_UseDw;
-                --o_StatusWordCounter <= o_StatusWordCounter;
-            end if;
-                o_StatusWordCounter <=  std_logic_vector(to_unsigned(v_UseDw,g_AddrSize));
-
-
-            
-            -- Management of Empty counter
-            if v_UseDw = 0 then
-                s_StatusEmpty   <= '1';
-                o_StatusEmpty   <= '1';
-            else
-                s_StatusEmpty   <= '0';
-                o_StatusEmpty   <= '0';
+                s_WrAddress     <= s_WrAddress;
             end if;
 
 
-            -- Management of Almost Empty counter
-            if v_UseDw <= g_AlmostEmptyLevel then
-                o_StatusAlmostEmpty   <= '1';
-            else
-                o_StatusAlmostEmpty   <= '0';
-            end if;
-
-            -- Management of Almost Full counter
-            if v_UseDw >= g_AlmostFullLevel then
-                o_StatusAlmostFull   <= '1';
-            else
-                o_StatusAlmostFull   <= '0';
-            end if;
-
-            -- Management of  Full counter
-            if v_UseDw = 2**g_AddrSize then
-                s_StatusFull   <= '1';
-                o_StatusFull   <= '1';
-            else
-                s_StatusFull   <= '0';
-                o_StatusFull   <= '0';
+            if s_StatusEmpty='0' and i_RdReq = '1' then
+                if unsigned(s_RdAddress) = 2**g_AddrSize-1 then
+                    s_RdAddress <= (others =>'0');
+                    s_Loop      <= '0';
+                else
+                    s_RdAddress <= std_logic_vector(unsigned(s_RdAddress) + 1);
+                end if;
+            else                                
+                s_RdAddress     <= s_RdAddress; 
             end if;
 
 -- SYNC_GUARDEND_GENERATE : if g_SyncReset = True generate
-            end if;
+        end if;
 -- end generate SYNC_GUARDEND_GENERATE;
-       end if;
+    end if;
+end process AccessProcess;
 
-    end process GuardAccess;
-    
 
--- 
 -- -------------------------------------------------------------------------------
 -- --
--- -- Process	      : STATUS
+-- -- Process        : -
+-- -- Type           : Asynchronous
+-- -- Description    : Enable access request depending on Full and Empty status  
+-- --                : Registered when used by RAM
+-- ------------------------------------------------------------------------------- 
+s_WrEn      <=  '1' when (s_StatusFull='0' and i_WrReq = '1') else 
+                '0';
+s_RdEn      <=  '1' when (s_StatusEmpty='0' and i_RdReq = '1') else 
+                '0';
+
+
+-- -------------------------------------------------------------------------------
+-- --
+-- -- Process        : -
+-- -- Type           : Asynchronous
+-- -- Description    : Full and Empty status  
+-- --                : Must be registered for better speed 
+-- ------------------------------------------------------------------------------- 
+-- (s_WrAddress = s_RdAddress) => full or empty ?
+-- Case 1: 0.1.2...s_RdAddress.s_WrAddress...       => nearly empty     => s_RdAddress < s_WrAddress => Loop = 0
+-- Case 1: 0.1.2...s_WrAddress.s_RdAddress...       => nearly full      => s_WrAddress < s_RdAddress => Loop = 1
+-- Case 1: s_WrAddress...6.7.8.9.10...s_RdAddress   => nearly empty     => s_WrAddress < s_RdAddress => Loop = 0
+-- Case 1: s_RdAddress...6.7.8.9.10...s_WrAddress   => nearly full      => s_RdAddress < s_WrAddress => Loop = 1
+s_StatusEmpty           <= '1' when (unsigned(s_RdAddress) = unsigned(s_WrAddress) and s_Loop = '0') else '0';
+s_StatusFull            <= '1' when (unsigned(s_RdAddress) = unsigned(s_WrAddress) and s_Loop = '1') else '0';
+o_StatusEmpty           <= s_StatusEmpty;
+o_StatusFull            <= s_StatusFull;
+
+
+
+-- -------------------------------------------------------------------------------
+-- --
+-- -- Process        : OptionProcess
 -- -- Type           : Synchronous
 -- -- Description    : Compute the number of word in the Fifo and manage the flags
 -- --
 -- -------------------------------------------------------------------------------  
--- -- ASYNC_STATUS_GENERATE: if g_AsyncReset = True generate 
--- -- Status : process(i_areset_n, i_clk)
--- -- end generate ASYNC_STATUS_GENERATE;
--- -- NOTASYNC_STATUS_GENERATE:if g_AsyncReset = False generate
--- -- Status : process(i_clk)
--- -- end generate NOTASYNC_STATUS_GENERATE;
--- Status : process(i_areset_n, i_clk)
---     variable v_UseDw    : natural range 0 to 2**g_AddrSize;
---     begin
---         if i_areset_n = '0' and g_AsyncReset = True then
---             v_UseDw                := 0;
---             s_StatusEmpty          <= '1';
---             s_StatusFull           <= '0';        
---             o_StatusEmpty          <= '1';
---             o_StatusFull           <= '0';
---             o_StatusAlmostFull     <= '0';
---             o_StatusAlmostEmpty    <= '1';
---             o_StatusWordCounter    <= (others =>'0');
---          
---         elsif rising_edge(i_clk) then
---     
--- --elsif g_AsyncReset = False generate 
--- --Status : process(i_areset_n, i_clk)
--- --    variable v_UseDw    : natural range 0 to 2**g_AddrSize;
--- --    begin
--- --        if rising_edge(i_clk) then
+--ASYNC_GUARD_GENERATE: if (g_AsyncReset = True) generate   
+--GuardAccess : process(i_areset_n, i_clk)
+--end generate ASYNC_GUARD_GENERATE;
+
+--NOTASYNC_GUARD_GENERATE: if g_AsyncReset = False generate
+--GuardAccess : process(i_clk)
+--end generate NOTASYNC_GUARD_GENERATE;
+OptionProcess : process(i_areset_n, i_clk)
+begin
+    if i_areset_n = '0' and g_AsyncReset = True then
+        o_StatusAlmostFull      <= '0';
+        o_StatusAlmostEmpty     <= '1';
+        s_StatusWordCounter     <= (others =>'0');
+		s_Overflow 				<= '0';
+		s_Underflow 			<= '0';
+
+    elsif rising_edge(i_clk) then
+--end generate ASYNC_GUARD_GENERATE;    
+--elsif g_AsyncReset = False generate   
+
+--end generate ASYNC_GUARD_GENERATE;
+
+-- SYNC_GUARD_GENERATE : if g_SyncReset = True generate
+        if i_sreset = '1' and g_SyncReset = True then        
+            o_StatusAlmostFull      <= '0';
+            o_StatusAlmostEmpty     <= '1';
+            s_StatusWordCounter     <= (others =>'0');
+            s_Overflow 				<= '0';
+            s_Underflow 			<= '0';
+        
+        else
+--end generate SYNC_GUARD_GENERATE;
+
+            -- Introduce Latency
+    		if s_Loop = '0' then --unsigned(s_WrAddress) >= unsigned(s_RdAddress) then
+    			s_StatusWordCounter <= std_logic_vector(("0"& unsigned(s_WrAddress)) - ("0"& unsigned(s_RdAddress)));
+    		else
+    			s_StatusWordCounter <= std_logic_vector(to_unsigned(2**g_AddrSize,s_StatusWordCounter'length) - ("0"& unsigned(s_RdAddress) + ("0"& unsigned(s_WrAddress))));
+    		end if;
+
+
+            if s_StatusEmpty='1' and i_RdReq = '1' then
+    			s_Underflow 			<= '1';
+    		else 
+    			s_Underflow 			<= '0';
+    		end if;
+    		
+        	if s_StatusFull='1' and i_WrReq = '1' then
+    			s_Overflow <= '1';
+    		else
+    			s_Overflow <= '0';
+    		end if;
+
+        o_StatusAlmostEmpty     <= s_StatusAlmostEmpty;
+        o_StatusAlmostFull      <= s_StatusAlmostFull;		
+
+-- SYNC_GUARDEND_GENERATE : if g_SyncReset = True generate
+        end if;
+-- end generate SYNC_GUARDEND_GENERATE;
+    end if;
+end process OptionProcess;
+
+o_StatusWordCounter     <= s_StatusWordCounter; -- registered
+o_Overflow              <= s_Overflow;          -- registered
+o_Underflow             <= s_Underflow;	        -- registered
+
+
+-- -------------------------------------------------------------------------------
 -- --
--- --end generate ASYNC_STATUS_GENERATE;
--- 
--- -- SYNC_STATUS_GENERATE : if g_SyncReset = True generate
---             if i_sreset = '1' and g_SyncReset = True then
---                 v_UseDw                := 0;
---                 s_StatusEmpty          <= '1';
---                 s_StatusFull           <= '0';
---                 o_StatusEmpty          <= '1';
---                 o_StatusFull           <= '0';
---                 o_StatusAlmostFull     <= '0';
---                 o_StatusAlmostEmpty    <= '1';
---                 o_StatusWordCounter    <= (others =>'0');
---             else
--- --end generate SYNC_STATUS_GENERATE;
--- 
---                 -- Mangement of the counter
---                 -- if read or write access ONLY
---                 if s_WrEn = '1' and s_RdEn = '0' then  
---                     v_UseDw := v_UseDw + 1;
---                 elsif s_WrEn = '0' and s_RdEn = '1' then 
---                     v_UseDw := v_UseDw - 1;
---                 else
---                     v_UseDw := v_UseDw;
---                 end if;
---     
---                 o_StatusWordCounter <= std_logic_vector(to_unsigned(v_UseDw,g_AddrSize));
---                 
---     
---                 -- Management of Empty counter
---                 if v_UseDw = 0 then
---                     s_StatusEmpty   <= '1';
---                     o_StatusEmpty   <= '1';
---                 else
---                     s_StatusEmpty   <= '0';
---                     o_StatusEmpty   <= '0';
---                 end if;
---     
---     
---                 -- Management of Almost Empty counter
---                 if v_UseDw <= g_AlmostEmptyLevel then
---                     o_StatusAlmostEmpty   <= '1';
---                 else
---                     o_StatusAlmostEmpty   <= '0';
---                 end if;
---     
---                 -- Management of Almost Full counter
---                 if v_UseDw >= g_AlmostFullLevel then
---                     o_StatusAlmostFull   <= '1';
---                 else
---                     o_StatusAlmostFull   <= '0';
---                 end if;
---     
---                 -- Management of  Full counter
---                 if v_UseDw = 2**g_AddrSize then
---                     s_StatusFull   <= '1';
---                     o_StatusFull   <= '1';
---                 else
---                     s_StatusFull   <= '0';
---                     o_StatusFull   <= '0';
---                 end if;
---             
--- 
--- --SYNC_STATUSEND_GENERATE : if g_SyncReset = True generate
---             end if;
--- --end generate SYNC_STATUSEND_GENERATE;
--- 
---         end if;
---         -- WARNING : decalade de 1/ periode en mettant ici l'affectantion
---         --o_StatusFull  <= s_StatusFull;                           
---         --o_StatusEmpty <= s_StatusEmpty;
---     end process Status;   
-
-
+-- -- Process        : -
+-- -- Type           : Asynchronous
+-- -- Description    : AlmostFull and AlmostEmpty status (registered before output) 
+-- --
+-- -------------------------------------------------------------------------------
+s_StatusAlmostEmpty     <= 	'1' when (((unsigned(s_RdAddress) + to_unsigned(g_AlmostEmptyLevel,s_RdAddress'length)) >= unsigned(s_WrAddress)) and s_Loop = '0') else 
+							'1' when ( ((to_unsigned(2**g_AddrSize-1,s_WrAddress'length) - unsigned(s_RdAddress) + unsigned(s_WrAddress)) <= to_unsigned(g_AlmostEmptyLevel,s_RdAddress'length)) and s_Loop = '1') else
+							'0';
+							
+s_StatusAlmostFull      <= 	'1' when (((unsigned(s_RdAddress) - unsigned(s_WrAddress)) <=  g_AlmostFullLevel) and s_Loop = '1') else
+							'1' when ( ( (to_unsigned(2**g_AddrSize-1,s_WrAddress'length) - unsigned(s_WrAddress)) <=  (unsigned(s_RdAddress) + to_unsigned(g_AlmostFullLevel,s_RdAddress'length) ) ) and s_Loop = '0') else
+							'0';
 
 end Behavior;

@@ -41,7 +41,7 @@ signal mo_StatusFull        : std_logic;
 signal mo_StatusEmpty       : std_logic;       
 signal mo_StatusAlmostFull  : std_logic;  
 signal mo_StatusAlmostEmpty : std_logic; 
-signal mo_StatusWordCounter : std_logic_vector(C_AddrSize-1 downto 0);
+signal mo_StatusWordCounter : std_logic_vector(C_AddrSize downto 0);
 
 signal s_CtrlCounter            : natural range 0 to 2**C_AddrSize;--std_logic_vector(C_AddrSize-1 downto 0);
 signal s_CtrlCounter_tmp        : natural range 0 to 2**C_AddrSize;--std_logic_vector(C_AddrSize-1 downto 0);
@@ -134,6 +134,7 @@ StatusWordCounter_PROCESS : process
 begin
 
     wait until rising_edge(mi_clk);
+
     if mi_WrReq = '1' then
         if mi_RdReq ='0' then
             if s_CtrlCounter < 2**C_AddrSize then
@@ -180,7 +181,7 @@ end process StatusWordCounter_PROCESS;
 
 
     WR_DATA_PROCESS : process
-        variable ValCpt : natural range 0 to 2**C_AddrSize;
+        variable ValCpt : natural range 0 to 2**C_AddrSize+5;
     begin
         -- Initialise input
         mi_WrData   <= (others => '0');          
@@ -193,20 +194,26 @@ end process StatusWordCounter_PROCESS;
         for i in 0 to 5 loop
             wait until rising_edge(mi_clk);
         end loop;
-
+    wait for CLK_PERIOD;
         assert false report "Beginning " severity note;
-
-        while (ValCpt /= 2**C_AddrSize) loop 
+        assert false report "CONTROLE WRITE" severity note;
+        assert false report "CONTROLE WRITE" severity note;
+        
+        while (ValCpt /= 2**C_AddrSize+5) loop 
             ValCpt := ValCpt + 1;
-            mi_WrData <= std_logic_vector(to_unsigned(ValCpt, mi_WrData'length));
-            mi_WrReq   <= '1';
             mi_RdReq   <= '0';
+            mi_WrData <= std_logic_vector(to_unsigned(ValCpt, mi_WrData'length));
 
+            if (ValCpt < 2**C_AddrSize+1) then              
+                mi_WrReq   <= '1';
+            else
+                mi_WrReq   <= '0';
+            end if;
 
             if ValCpt < 10 then -- for Empty
                 assert false report "CONTROLE val="  & integer'image((ValCpt)) & " mo_StatusWordCounter=" & integer'image(to_integer(unsigned(mo_StatusWordCounter)))  & " s_CtrlCounter_tmp=" & integer'image((s_CtrlCounter_tmp)) & " s_CtrlCounter_tmp_tmp=" & integer'image((s_CtrlCounter_tmp_tmp)) severity note;
             end if;
-            if ValCpt > 253 then -- for Full
+            if ValCpt > 2**C_AddrSize-3 then -- 253 then -- for Full
                 assert false report "CONTROLE val="  & integer'image((ValCpt)) & " mo_StatusWordCounter=" & integer'image(to_integer(unsigned(mo_StatusWordCounter)))  & " s_CtrlCounter_tmp=" & integer'image((s_CtrlCounter_tmp)) & " s_CtrlCounter_tmp_tmp=" & integer'image((s_CtrlCounter_tmp_tmp)) severity note;
             end if;
 
@@ -222,7 +229,7 @@ end process StatusWordCounter_PROCESS;
                 assert false report "WError mo_StatusFull_2 " severity note;
             end if;
             if mo_StatusFull = '1' and s_StatusFull_tmp ='1' then
-                assert false report "Wmo_StatusEmpty ok " severity note;
+                assert false report "Wmo_StatusFull ok " severity note;
             end if;
 
 
@@ -258,66 +265,81 @@ end process StatusWordCounter_PROCESS;
             end if;             
 
             wait until rising_edge(mi_clk);
-
+    wait for CLK_PERIOD;
             
         end loop;
 
         mi_WrReq   <= '0';
         ValCpt    := 0;
+        mi_RdReq   <= '1';
+        wait until rising_edge(mi_clk);
 
+        assert false report "CONTROLE READ" severity note;
+        assert false report "CONTROLE READ" severity note;
 
         while (ValCpt /= 2**C_AddrSize) loop
             mi_RdReq   <= '1';
             ValCpt := ValCpt + 1;
+
+
+            if ValCpt < 10 then -- for Empty
+                assert false report "CONTROLE val="  & integer'image((ValCpt)) & " mo_StatusWordCounter=" & integer'image(to_integer(unsigned(mo_StatusWordCounter)))  & " s_CtrlCounter_tmp=" & integer'image((s_CtrlCounter_tmp)) & " s_CtrlCounter_tmp_tmp=" & integer'image((s_CtrlCounter_tmp_tmp)) severity note;
+                assert false report "CONTROLE val="  & integer'image((ValCpt)) & " mo_RdData=" & integer'image(to_integer(unsigned(mo_RdData)))  severity note;
+            end if;
+            if ValCpt > 2**C_AddrSize-3 then -- 253 then -- for Full
+                assert false report "CONTROLE val="  & integer'image((ValCpt)) & " mo_StatusWordCounter=" & integer'image(to_integer(unsigned(mo_StatusWordCounter)))  & " s_CtrlCounter_tmp=" & integer'image((s_CtrlCounter_tmp)) & " s_CtrlCounter_tmp_tmp=" & integer'image((s_CtrlCounter_tmp_tmp)) severity note;
+            end if;
+
+
             if mo_RdData /= std_logic_vector(to_unsigned(ValCpt, mo_RdData'length)) then
-                assert false report "Error mo_RdData " severity note;
+                assert false report "RError mo_RdData " severity note;
             end if;
 
 
             if mo_StatusWordCounter /= std_logic_vector(to_unsigned(ValCpt,mo_StatusWordCounter'length)) then
-                assert false report "Error mo_StatusWordCounter2 " & integer'image((ValCpt)) severity note;
+                assert false report "RError mo_StatusWordCounter2 " & integer'image((ValCpt)) severity note;
             end if;
 
             if ValCpt = 2**C_AddrSize-1 and mo_StatusFull ='0'then
-                assert false report "Error mo_StatusFull_1 " severity note;
+                assert false report "RError mo_StatusFull_1 " severity note;
             end if;
             if ValCpt /= 2**C_AddrSize-1 and mo_StatusFull ='1'then
-                assert false report "Error mo_StatusFull_2 " severity note;
+                assert false report "RError mo_StatusFull_2 " severity note;
             end if;
             if ValCpt = 2**C_AddrSize-1 and mo_StatusFull ='1' then
-                assert false report "mo_StatusFull ok " severity note;
+                assert false report "Rmo_StatusFull ok " severity note;
             end if;
 
 
             if ValCpt = 0 and mo_StatusEmpty ='0'then
-                assert false report "Error mo_StatusEmpty_1" severity note;
+                assert false report "RError mo_StatusEmpty_1" severity note;
             end if;
             if ValCpt /= 0 and mo_StatusEmpty ='1'then
-                assert false report "Error mo_StatusEmpty_2" severity note;
+                assert false report "RError mo_StatusEmpty_2" severity note;
             end if;
             if ValCpt = 0 and mo_StatusEmpty ='1'then
-                assert false report "mo_StatusEmpty ok" severity note;
+                assert false report "Rmo_StatusEmpty ok" severity note;
             end if;
 
      
             if ValCpt = C_AlmostFullLevel and mo_StatusAlmostFull ='0'then
-                assert false report "Error mo_StatusAlmostFull_1" severity note;
+                assert false report "RError mo_StatusAlmostFull_1" severity note;
             end if;
             if ValCpt /= C_AlmostFullLevel and mo_StatusAlmostFull ='1'then
-                assert false report "Error mo_StatusAlmostFull_2" severity note;
+                assert false report "RError mo_StatusAlmostFull_2" severity note;
             end if;
             if ValCpt = C_AlmostFullLevel and mo_StatusAlmostFull ='1'then
-                assert false report "mo_StatusAlmostFull ok" severity note;
+                assert false report "Rmo_StatusAlmostFull ok" severity note;
             end if;   
 
             if ValCpt = C_AlmostEmptyLevel and mo_StatusAlmostEmpty ='0'then
-                assert false report "Error mo_StatusAlmostEmpty_1" severity note;
+                assert false report "RError mo_StatusAlmostEmpty_1" severity note;
             end if;
             if ValCpt /= C_AlmostEmptyLevel and mo_StatusAlmostEmpty ='1'then
-                assert false report "Error mo_StatusAlmostEmpty_2" severity note;
+                assert false report "RError mo_StatusAlmostEmpty_2" severity note;
             end if;
             if ValCpt = C_AlmostEmptyLevel and mo_StatusAlmostEmpty ='1'then
-                assert false report "mo_StatusAlmostEmpty ok" severity note;
+                assert false report "Rmo_StatusAlmostEmpty ok" severity note;
             end if;
 
             wait until rising_edge(mi_clk);
