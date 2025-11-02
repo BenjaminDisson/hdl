@@ -20,6 +20,8 @@ add wave -noupdate /tb_wrapper_fifo1c/inst_Wrapper_Fifo1c/inst_InferFifo1c/o_Sta
 add wave -noupdate /tb_wrapper_fifo1c/inst_Wrapper_Fifo1c/inst_InferFifo1c/o_StatusAlmostFull
 add wave -noupdate /tb_wrapper_fifo1c/inst_Wrapper_Fifo1c/inst_InferFifo1c/o_StatusAlmostEmpty
 add wave -noupdate /tb_wrapper_fifo1c/inst_Wrapper_Fifo1c/inst_InferFifo1c/o_StatusWordCounter
+add wave -noupdate /tb_wrapper_fifo1c/inst_Wrapper_Fifo1c/inst_InferFifo1c/i_RdReq
+add wave -noupdate /tb_wrapper_fifo1c/inst_Wrapper_Fifo1c/inst_InferFifo1c/o_RdData
 add wave -noupdate /tb_wrapper_fifo1c/inst_Wrapper_Fifo1c/inst_InferFifo1c/s_WrEn
 add wave -noupdate /tb_wrapper_fifo1c/inst_Wrapper_Fifo1c/inst_InferFifo1c/s_WrData
 add wave -noupdate /tb_wrapper_fifo1c/inst_Wrapper_Fifo1c/inst_InferFifo1c/s_StatusEmpty
@@ -32,7 +34,7 @@ add wave -noupdate /tb_wrapper_fifo1c/inst_Wrapper_Fifo1c/inst_InferFifo1c/inst_
 add wave -noupdate /tb_wrapper_fifo1c/inst_Wrapper_Fifo1c/inst_InferFifo1c/inst_WrapperRam1c2p/inst_InferRam1c2p/i_WrData
 add wave -noupdate /tb_wrapper_fifo1c/inst_Wrapper_Fifo1c/inst_InferFifo1c/inst_WrapperRam1c2p/inst_InferRam1c2p/i_RdAddress
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {5369785 ps} 0}
+WaveRestoreCursors {{Cursor 1} {5570000 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 159
 configure wave -valuecolwidth 89
@@ -48,4 +50,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {5266004 ps} {5653996 ps}
+WaveRestoreZoom {5158221 ps} {5249064 ps}
