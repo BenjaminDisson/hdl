@@ -1,0 +1,6 @@
+set_global_assignment -name VHDL_FILE [file join $::quartus(qip_path) "CapsuleTopAHBLite.vhd"]
+set_global_assignment -name SYSTEMVERILOG_FILE [file join $::quartus(qip_path) "AHBLite.sv"]
+set_global_assignment -name VHDL_FILE [file join $::quartus(qip_path) "MasterAHBLite.vhd"]
+
+
+
