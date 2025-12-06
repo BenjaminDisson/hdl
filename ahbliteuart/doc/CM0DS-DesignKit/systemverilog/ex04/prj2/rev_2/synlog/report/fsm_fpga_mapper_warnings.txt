@@ -1,1 +1,0 @@
-@W: MT420 |Found inferred clock fsm|Crystal with period 9.26ns. Please declare a user-defined clock on object "p:Crystal"
