@@ -8,3 +8,5 @@
 *.wlf
 work/
 yos/
+sim/
+doc/
