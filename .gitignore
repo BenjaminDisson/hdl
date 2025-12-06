@@ -6,7 +6,9 @@
 *.o
 *.so
 *.wlf
+transcript
+files.f
 work/
 yos/
 sim/
-doc/
+db/
