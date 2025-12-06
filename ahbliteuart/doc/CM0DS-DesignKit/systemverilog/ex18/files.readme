@@ -1,0 +1,51 @@
+FILES YOU NEED TO WORK ON:
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+apb_component.sv:
+  Component class, wrapper for APB_Driver and APB_Stim
+  together with the channel that they use to communicate.
+  You need to complete this class.
+
+apb_env.sv:
+  Top-level testbench environment class APB_env, creates an instance 
+  of APB_Component.  This class is complete and you do not need to 
+  alter it for the first part of the exercise.  For the "If You
+  Have Time" section, there is an opportunity to modify this
+  class to provide functions that make it easier for a testcase
+  to control the stimulus generation.  Look for comments containing
+  the string IF YOU HAVE TIME.
+
+apb_tb.sv:
+
+
+FILES YOU DO NOT NEED TO ALTER:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+dut/apb_dummy.sv:
+  Dummy APB slave, provides non-trivial data on read cycles
+  and reports all active cycles to the console.
+  
+bases.sv
+  Base class definitions for Transaction, Component and Channel.
+  Transaction is a base class for all transaction data classes
+  such as APB_Trans.  Channel is a general-purpose FIFO channel
+  that carries Transaction objects from one component to another.
+  Component is the component base class, as discussed in the
+  classroom session, providing hierarchy and run management.
+  
+apb_harness.sv:
+  Test harness and test-signals interface, unchanged from the previous exercise
+
+apb_classes.sv:
+  Definitions of classes APB_Trans, APB_Driver, APB_Stim.
+  These classes are all complete, but you are encouraged to
+  take a close look at APB_Stim to see what has changed to
+  take advantage of the Component base class 
+  
+mem_map_apb_trans.sv:
+  This file defines class Mem_map_APB_Trans, derived from
+  APB_Trans to provide modified stimulus.  This class definition
+  is unchanged from the previous answer, but it has been moved
+  into a separate file to reduce clutter in the files you need
+  to work on for this lab.
+  

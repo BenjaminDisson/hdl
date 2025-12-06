@@ -1,0 +1,4 @@
+@W: CG677 :"D:\Train\systemverilog\ex04\fsm.sv":10:0:10:7|Ignoring timeunit for synthesis
+@W: CG677 :"D:\Train\systemverilog\ex04\fsm.sv":11:0:11:12|Ignoring timeprecision for synthesis
+@W: CL249 :"D:\Train\systemverilog\ex04\fsm.sv":25:2:25:10|Initial value is not supported on state machine State
+

@@ -1,0 +1,16 @@
+
+fsm_encoding {5252251} onehot
+
+fsm_state_encoding {5252251} Zero {000001}
+
+fsm_state_encoding {5252251} Start {000010}
+
+fsm_state_encoding {5252251} Running {000100}
+
+fsm_state_encoding {5252251} Stop {001000}
+
+fsm_state_encoding {5252251} Stopped {010000}
+
+fsm_state_encoding {5252251} Reset {100000}
+
+fsm_registers {5252251} {State[5]}  {State[4]}  {State[3]}  {State[2]}  {State[1]}  {State[0]} 

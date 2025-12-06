@@ -1,0 +1,1 @@
+@W: MT530 :"d:\train\systemverilog\ex04\fsm.sv":25:2:25:10|Found inferred clock fsm|Crystal which controls 6 sequential elements including State[5:0]. This clock has no specified timing constraint which may adversely impact design performance. 

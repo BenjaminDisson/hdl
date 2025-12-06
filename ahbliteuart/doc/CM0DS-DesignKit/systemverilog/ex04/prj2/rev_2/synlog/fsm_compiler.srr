@@ -1,0 +1,58 @@
+Synopsys HDL Compiler, version comp201503sp1p1, Build 240R, built Dec  1 2015
+@N|Running in 64-bit mode
+Copyright (C) 1994-2015 Synopsys, Inc. This software and the associated documentation are proprietary to Synopsys, Inc. This software may only be used in accordance with the terms and conditions of a written license agreement with Synopsys, Inc.  All other use, reproduction, or distribution of this software is strictly prohibited.
+
+Synopsys Verilog Compiler, version comp201503sp1p1, Build 240R, built Dec  1 2015
+@N|Running in 64-bit mode
+Copyright (C) 1994-2015 Synopsys, Inc. This software and the associated documentation are proprietary to Synopsys, Inc. This software may only be used in accordance with the terms and conditions of a written license agreement with Synopsys, Inc.  All other use, reproduction, or distribution of this software is strictly prohibited.
+
+@N:: Running Verilog Compiler in System Verilog mode
+@N:: Running Verilog Compiler in Multiple File Compilation Unit mode
+@I::"D:\Microsemi\Libero_SoC_v11.7\Synplify\lib\proasic\igloo.v"
+@I::"D:\Microsemi\Libero_SoC_v11.7\Synplify\lib\vlog\hypermods.v"
+@I::"D:\Microsemi\Libero_SoC_v11.7\Synplify\lib\vlog\umr_capim.v"
+@I::"D:\Microsemi\Libero_SoC_v11.7\Synplify\lib\vlog\scemi_objects.v"
+@I::"D:\Microsemi\Libero_SoC_v11.7\Synplify\lib\vlog\scemi_pipes.svh"
+@I::"D:\Train\systemverilog\ex04\fsm.sv"
+@W: CG677 :"D:\Train\systemverilog\ex04\fsm.sv":10:0:10:7|Ignoring timeunit for synthesis
+@W: CG677 :"D:\Train\systemverilog\ex04\fsm.sv":11:0:11:12|Ignoring timeprecision for synthesis
+Verilog syntax check successful!
+Selecting top level module fsm
+@N: CG364 :"D:\Train\systemverilog\ex04\fsm.sv":5:7:5:9|Synthesizing module fsm
+
+@N: CL201 :"D:\Train\systemverilog\ex04\fsm.sv":25:2:25:10|Trying to extract state machine for register State
+Extracted state machine for register State
+State machine has 6 reachable states with original encodings of:
+   00000000000000000000000000000000
+   00000000000000000000000000000001
+   00000000000000000000000000000010
+   00000000000000000000000000000011
+   00000000000000000000000000000100
+   00000000000000000000000000000101
+@W: CL249 :"D:\Train\systemverilog\ex04\fsm.sv":25:2:25:10|Initial value is not supported on state machine State
+
+At c_ver Exit (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 70MB peak: 72MB)
+
+Process took 0h:00m:01s realtime, 0h:00m:01s cputime
+# Mon Mar 12 17:43:45 2018
+
+###########################################################]
+Synopsys Netlist Linker, version comp201503sp1p1, Build 240R, built Dec  1 2015
+@N|Running in 64-bit mode
+@N: NF107 :"D:\Train\systemverilog\ex04\fsm.sv":5:7:5:9|Selected library: work cell: fsm view verilog as top level
+@N: NF107 :"D:\Train\systemverilog\ex04\fsm.sv":5:7:5:9|Selected library: work cell: fsm view verilog as top level
+
+At syn_nfilter Exit (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 67MB peak: 68MB)
+
+Process took 0h:00m:01s realtime, 0h:00m:01s cputime
+# Mon Mar 12 17:43:45 2018
+
+###########################################################]
+@END
+
+At c_hdl Exit (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 3MB peak: 4MB)
+
+Process took 0h:00m:01s realtime, 0h:00m:01s cputime
+# Mon Mar 12 17:43:45 2018
+
+###########################################################]

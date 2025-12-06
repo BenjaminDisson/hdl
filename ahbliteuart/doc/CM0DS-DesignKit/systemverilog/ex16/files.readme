@@ -1,0 +1,33 @@
+FILES YOU DO NOT NEED TO ALTER:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+dut/apb_dummy.sv:
+  Dummy APB slave, provides non-trivial data on read cycles
+  and reports all active cycles to the console.
+  
+apb_harness.sv:
+  Test harness and test-signals interface, unchanged
+  from the answer to the previous exercise
+
+apb_classes.sv:
+  Package of APB transaction classes, largely unchanged from
+  the previous answer.  Stimulus generator now uses a template object.
+  In the data class APB_Trans, methods copy(), compare() and 
+  psprint() are now virtual so that they can be overridden.
+  PLEASE INSPECT THIS FILE to be sure you understand how the
+  "template object" mechanism is used in class APB_Stream.
+  
+apb_pkg.sv
+  Package that includes all the classes
+  
+
+FILES YOU NEED TO WORK ON:
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+mem_map_apb_trans.sv
+  In this file you should create a derived transaction data class with
+  randomisation constraints.
+
+apb_tb.sv:
+  Top-level module, taken from the previous answer.  In this file
+  you should modify the test to use your new class.

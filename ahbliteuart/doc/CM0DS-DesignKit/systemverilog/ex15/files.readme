@@ -1,0 +1,22 @@
+dut/apb_dummy.sv:
+  Dummy APB slave, provides non-trivial data on read cycles
+  and reports all active cycles to the console.
+  You do not need to modify this file.
+apb_harness.sv:
+  Test harness and test-signals interface, to be constructed
+  by delegates according to the scheme shown in the
+  "Virtual Interfaces" section of the course.
+  Some hints in the file.
+apb_classes.sv:
+  APB transaction classes:
+  - ABP_Trans and APB_Stream classes, taken from the previous exercise
+  - APB_Driver bus functional model class, expects to 
+    interact with a physical APB bus via virtual interface
+apb_pkg.sv
+  Package that includes the above classes
+apb_tb.sv:
+  Top-level module.  Simply runs the environment by calling its
+  run() method.  Simulate this in parallel with APB_harness.
+files.f:
+  Command file for use with the tools' -f option, specifies
+  which files to compile

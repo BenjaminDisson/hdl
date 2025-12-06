@@ -1,0 +1,42 @@
+Synopsys Microsemi Technology Pre-mapping, Version mapact, Build 1659R, Built Dec 10 2015 09:42:41
+Copyright (C) 1994-2015, Synopsys, Inc. This software and the associated documentation are proprietary to Synopsys, Inc. This software may only be used in accordance with the terms and conditions of a written license agreement with Synopsys, Inc.  All other use, reproduction, or distribution of this software is strictly prohibited.
+Product Version J-2015.03M-SP1-2
+
+Mapper Startup Complete (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 98MB peak: 99MB)
+
+@L: D:\Train\systemverilog\ex04\prj2\rev_2\fsm_scck.rpt 
+Printing clock  summary report in "D:\Train\systemverilog\ex04\prj2\rev_2\fsm_scck.rpt" file 
+@N: MF248 |Running in 64-bit mode.
+@N: MF667 |Clock conversion disabled 
+
+Design Input Complete (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 99MB peak: 101MB)
+
+
+Mapper Initialization Complete (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 99MB peak: 101MB)
+
+
+Finished netlist restructuring (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 107MB peak: 109MB)
+
+
+
+@S |Clock Summary
+*****************
+
+Start           Requested     Requested     Clock        Clock                
+Clock           Frequency     Period        Type         Group                
+------------------------------------------------------------------------------
+fsm|Crystal     1.0 MHz       1000.000      inferred     Autoconstr_clkgroup_0
+==============================================================================
+
+@W: MT530 :"d:\train\systemverilog\ex04\fsm.sv":25:2:25:10|Found inferred clock fsm|Crystal which controls 6 sequential elements including State[5:0]. This clock has no specified timing constraint which may adversely impact design performance. 
+
+Finished Pre Mapping Phase.
+@N: BN225 |Writing default property annotation file D:\Train\systemverilog\ex04\prj2\rev_2\fsm.sap.
+Pre-mapping successful!
+
+At Mapper Exit (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 45MB peak: 109MB)
+
+Process took 0h:00m:01s realtime, 0h:00m:01s cputime
+# Mon Mar 12 17:43:47 2018
+
+###########################################################]
