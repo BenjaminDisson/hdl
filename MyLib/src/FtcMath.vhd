@@ -53,7 +53,7 @@ package body FtcMath is
 				v_value_sat(v_value_sat'high) := '0';
 				o_overflow <= '1';
 					
-			elsif v_value_round(v_value_round'high) = '1' and v_A(v_A'high downto v_A'high-k_killL) /= C_ONES then
+			elsif v_value_round(v_value_round'high) = '1' and v_value_round(v_value_round'high downto v_value_round'high-sat) /= C_ONES then
 				v_value_sat := (others=>'0'); -- max int
 				v_value_sat(v_value_sat'high) := '1';
 				v_value_sat(v_value_sat'low) := '1';
